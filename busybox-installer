@@ -1,0 +1,15 @@
+#!/bin/bash
+#Written at 3.02.2021
+
+#Busybox global options
+busybox="/bin/busybox"
+path="/bin"
+overwrite=false
+
+for applet in $(busybox --list)
+do
+	if [ $overwrite == true ] || [ ! -f "$path/$applet" ]
+	then
+		ln -s $busybox "$path/$applet"
+	fi
+done
