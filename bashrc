@@ -1,6 +1,7 @@
 #Bash custom configuration file
 #Written at 25.01.2021
-#Updated at 30.01.2021
+#Updated at 30.01.2021 (Fixed color codes)
+#Updated at 31.01.2021 (Added chrootmgr)
 
 #Ansii color codes
 STOP='\[\e[0m\]'
@@ -31,7 +32,7 @@ WHITEBG='\[\e[47m\]'
 
 #Display prompt
 #Looks like "|-(user)-(jobs)-(path)-> "
-PS1="${GREENBOLD}|-(${BLUEBOLD}\u${GREENBOLD})-(${CYANBOLD}\j${GREENBOLD})-(${PURPLEBOLD}\w${GREENBOLD})->${STOP} "
+PS1="${GREENBOLD}|-(${CYANBOLD}\u${GREENBOLD})-(${PURPLEBOLD}\j${GREENBOLD})-(${BLUEBOLD}\w${GREENBOLD})->${STOP} "
 PS2="${REDBOLD}>${STOP} "
 
 #History file configuration
@@ -43,24 +44,25 @@ HISTFILE="~/.history"
 #Aliases and functions
 alias vb="vim ~/.bashrc"
 alias sb="source ~/.bashrc"
-alias ls="ls --color=auto"
+alias ls="ls -1 --color=auto"
 alias grep="grep --color=auto"
 alias mkdir="mkdir -pv"
 alias cp="cp -r"
 alias la="ls -a"
 alias ll="ls -al"
 alias lr="ls -aR"
-alias lss="la | less"
 alias lg="la | grep"
-alias ps="ps ax"
 alias hg="history | grep"
 alias hh="history | head"
 alias ht="history | tail"
 alias poweroff="sudo poweroff"
 alias reboot="sudo reboot"
-function mkbp() { cp "$@" "$@.bak"; }
-function mkrs() { cp "$@.bak" "$@"; }
-function mktmp() { file="/tmp/mktmp-$@-$(date +%s).txt"; touch "$file"; ln -s "$file" "$@"; unset file; }
+function lss() { ls "$1" | less; }
+function mkbp() { cp "$1" "$1.bak"; }
+function mkrs() { cp "$1.bak" "$1"; }
+function mktempf() { file="$(mktemp)"; ln -sf "$file" "$1"; unset file; }
+function mktempd() { file="$(mktemp -d)"; ln -sf "$file" "$1"; unset file; }
+function mkjail() { if [ ! -z $1 ]; then chrootmgr $1 create; chrootmgr $1 install $(which sh) $(which useradd) $(which busybox); chrootmgr $1 secure; fi; }
 
 #Variables
 LANG="en_US.UTF-8"

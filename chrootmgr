@@ -1,0 +1,39 @@
+#!/bin/bash
+#Minimalist secure chroot jail manager
+
+let argc=$#-1
+argv=("$@")
+jail=$(basename ${argv[0]})
+option=${argv[1]}
+
+case $option in
+	"create")
+                mkdir -pv $jail/{bin,lib,lib64}
+		#Solve ubuntu lib64 problem
+		cp -H /lib64/ld-linux-x86-64.so.2 $jail/lib64;;
+	"install")
+		for i in $(seq 2 $argc)
+                do
+			if [ -f ${argv[$i]} ]
+                        then
+				cp -H ${argv[$i]} $jail/bin
+				#If application is dynamically linked copy required libs
+				if [ $(file -L --mime-type ${argv[$i]} | cut -d ' ' -f 2) == "application/x-sharedlib" ]
+				then
+					cp --parents -H $(ldd ${argv[$i]} | cut -d ' ' -f 3 | grep .) $jail
+				fi
+			else
+				echo chrootmgr: Binary not found ${argv[$i]}
+			fi
+		done;;
+	"id")
+		for i in $(find $jail -type f)
+		do
+			echo $i $(cat $i | md5sum -b | cut -d ' ' -f 1)
+		done;;
+	"secure")
+		sudo chown -R root:root $jail;; #Make jail secure
+	*)
+		echo chrootmgr: Option not found
+		exit
+esac
