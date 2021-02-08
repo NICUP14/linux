@@ -1,7 +1,6 @@
 #Bash custom configuration file
 #Written at 25.01.2021
-#Updated at 30.01.2021 (Fixed color codes)
-#Updated at 31.01.2021 (Added chrootmgr)
+#Last updated at 8.02.2021
 
 #Ansii color codes
 STOP='\[\e[0m\]'
@@ -47,7 +46,9 @@ alias sb="source ~/.bashrc"
 alias ls="ls -1 --color=auto"
 alias grep="grep --color=auto"
 alias mkdir="mkdir -pv"
-alias cp="cp -r"
+alias mv="mv -v"
+alias cp="cp -rv"
+alias rm="rm -rv"
 alias la="ls -a"
 alias ll="ls -al"
 alias lr="ls -aR"
@@ -56,18 +57,22 @@ alias hg="history | grep"
 alias hh="history | head"
 alias ht="history | tail"
 alias poweroff="sudo poweroff"
-alias reboot="sudo reboot"
+alias reboot="sudo reboot" 
+function main() { echo -e '#include <iostream>\n\nint main()\n{\n\treturn 0;\n}' > $1/main.cpp; }
+function makefile() { if [ -n $1]; then file=$1; else exit; fi; echo -e 'SHELL = /bin/sh\nCXXFLAGS = -g -Wall\n\n.cpp:\n\techo Compiling $@...\n\t${CXX} -c ${CXXFLAGS} $@.cpp -o $@.o\n\n.o:\n\techo Linking $@...\n\t${CXX} $@.o -o $@\n\nclean:\n\techo Cleaning...\n\trm *.o' > $1/Makefile } 
 function lss() { ls "$1" | less; }
-function mkbp() { cp "$1" "$1.bak"; }
+function mkbk() { cp "$1" "$1.bak"; }
 function mkrs() { cp "$1.bak" "$1"; }
-function mktempf() { file="$(mktemp)"; ln -sf "$file" "$1"; unset file; }
-function mktempd() { file="$(mktemp -d)"; ln -sf "$file" "$1"; unset file; }
-function mkjail() { if [ ! -z $1 ]; then chrootmgr $1 create; chrootmgr $1 install $(which sh) $(which useradd) $(which busybox); chrootmgr $1 secure; fi; }
+function mktf() { file="$(mktemp)"; ln -sf "$file" "$1"; }
+function mktd() { file="$(mktemp -d)"; ln -sf "$file" "$1"; }
+function mkjail() { if [ -n $1 ]; then chrootmgr $1 create; chrootmgr $1 install $(which sh) $(which useradd); sudo busybox --install $1/bin; chrootmgr $1 secure; fi; }
+function backup() { tar -cvzf ~/Backups/backup_$(date +%d-%m-%Y).tar.gz -C ~ $(echo $BKPATH | tr ':' ' '); }
 
 #Variables
 LANG="en_US.UTF-8"
 PATH="$PATH:~/.bin"
 CDPATH="~:~/Projects"
+BKPATH="Desktop:Documents:Projects:Pictures:Videos:Music" #Must be absolute path if not in $HOME
 
 #Options
 shopt -s cdspell
