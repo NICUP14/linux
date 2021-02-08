@@ -58,8 +58,8 @@ alias hh="history | head"
 alias ht="history | tail"
 alias poweroff="sudo poweroff"
 alias reboot="sudo reboot" 
-function main() { echo -e '#include <iostream>\n\nint main()\n{\n\treturn 0;\n}' > $1/main.cpp; }
-function makefile() { if [ -n $1]; then file=$1; else exit; fi; echo -e 'SHELL = /bin/sh\nCXXFLAGS = -g -Wall\n\n.cpp:\n\techo Compiling $@...\n\t${CXX} -c ${CXXFLAGS} $@.cpp -o $@.o\n\n.o:\n\techo Linking $@...\n\t${CXX} $@.o -o $@\n\nclean:\n\techo Cleaning...\n\trm *.o' > $1/Makefile } 
+function main() { echo -e '#include <iostream>\n\nint main()\n{\n\treturn 0;\n}'; }
+function makefile() { echo -e 'SHELL = /bin/sh\nCXXFLAGS = -g -Wall\n\n.cpp:\n\techo Compiling $@...\n\t${CXX} -c ${CXXFLAGS} $@.cpp -o $@.o\n\n.o:\n\techo Linking $@...\n\t${CXX} $@.o -o $@\n\nclean:\n\techo Cleaning...\n\trm *.o'; } 
 function lss() { ls "$1" | less; }
 function mkbk() { cp "$1" "$1.bak"; }
 function mkrs() { cp "$1.bak" "$1"; }
