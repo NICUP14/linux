@@ -1,6 +1,6 @@
 #Bash custom configuration file
 #Written at 25.01.2021
-#Last updated at 8.02.2021
+#Last updated at 8.02.2021 (Added PROject manager, main Makefile general sample, better prompt)
 
 #Ansii color codes
 STOP='\[\e[0m\]'
@@ -31,7 +31,11 @@ WHITEBG='\[\e[47m\]'
 
 #Display prompt
 #Looks like "|-(user)-(jobs)-(path)-> "
-PS1="${GREENBOLD}|-(${CYANBOLD}\u${GREENBOLD})-(${PURPLEBOLD}\j${GREENBOLD})-(${BLUEBOLD}\w${GREENBOLD})->${STOP} "
+PSUSER=$CYANBOLD
+PSJOB=$PURPLEBOLD
+PSPWD=$BLUEBOLD
+PSOTHER=$GREENBOLD
+PS1="${PSOTHER}|-(${PSUSER}\u${PSOTHER})-(${PSJOB}\j${PSOTHER})-(${PSPWD}\w${PSOTHER})->${STOP} "
 PS2="${REDBOLD}>${STOP} "
 
 #History file configuration
@@ -59,13 +63,14 @@ alias ht="history | tail"
 alias poweroff="sudo poweroff"
 alias reboot="sudo reboot" 
 function main() { echo -e '#include <iostream>\n\nint main()\n{\n\treturn 0;\n}'; }
-function makefile() { echo -e 'SHELL = /bin/sh\nCXXFLAGS = -g -Wall\n\n.cpp:\n\techo Compiling $@...\n\t${CXX} -c ${CXXFLAGS} $@.cpp -o $@.o\n\n.o:\n\techo Linking $@...\n\t${CXX} $@.o -o $@\n\nclean:\n\techo Cleaning...\n\trm *.o'; } 
+function makefile() { echo -e 'SHELL = /bin/sh\nCXXFLAGS = -g -Wall\n\n.c:\n\techo Compiling $@ via ${CC}\n\t${CC} -c ${CFLAGS} $@.c -o $@.o\n\n.cpp:\n\techo Compiling $@...\n\t${CXX} -c ${CXXFLAGS} $@.cpp -o $@.o\n\n.o:\n\techo Linking $@...\n\t${CC} $@.o -o $@\n\nclean:\n\techo Cleaning...\n\trm *.o'; }
+function PRO() { if [ ! -z $1 ]; then export PRO=$1; else export PRO=$(pwd); fi; }
 function lss() { ls "$1" | less; }
 function mkbk() { cp "$1" "$1.bak"; }
 function mkrs() { cp "$1.bak" "$1"; }
 function mktf() { file="$(mktemp)"; ln -sf "$file" "$1"; }
 function mktd() { file="$(mktemp -d)"; ln -sf "$file" "$1"; }
-function mkjail() { if [ -n $1 ]; then chrootmgr $1 create; chrootmgr $1 install $(which sh) $(which useradd); sudo busybox --install $1/bin; chrootmgr $1 secure; fi; }
+function mkjail() { if [ ! -z $1 ]; then chrootmgr $1 create; chrootmgr $1 install $(which sh) $(which useradd); sudo busybox --install $1/bin; chrootmgr $1 secure; fi; }
 function backup() { tar -cvzf ~/Backups/backup_$(date +%d-%m-%Y).tar.gz -C ~ $(echo $BKPATH | tr ':' ' '); }
 
 #Variables
@@ -75,6 +80,7 @@ CDPATH="~:~/Projects"
 BKPATH="Desktop:Documents:Projects:Pictures:Videos:Music" #Must be absolute path if not in $HOME
 
 #Options
+shopt -s cdable_vars
 shopt -s cdspell
 shopt -s checkwinsize
 shopt -s cmdhist
