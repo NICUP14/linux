@@ -47,6 +47,7 @@ HISTFILE="~/.history"
 #Aliases and functions
 alias vb="vim ~/.bashrc"
 alias sb="source ~/.bashrc"
+alias bt="bashtop"
 alias ls="ls -1 --color=auto"
 alias grep="grep --color=auto"
 alias mkdir="mkdir -pv"
@@ -63,8 +64,8 @@ alias ht="history | tail"
 alias poweroff="sudo poweroff"
 alias reboot="sudo reboot" 
 function main() { echo -e '#include <iostream>\n\nint main()\n{\n\treturn 0;\n}'; }
-function makefile() { echo -e 'SHELL = /bin/sh\nCXXFLAGS = -g -Wall\n\n.c:\n\techo Compiling $@ via ${CC}\n\t${CC} -c ${CFLAGS} $@.c -o $@.o\n\n.cpp:\n\techo Compiling $@...\n\t${CXX} -c ${CXXFLAGS} $@.cpp -o $@.o\n\n.o:\n\techo Linking $@...\n\t${CC} $@.o -o $@\n\nclean:\n\techo Cleaning...\n\trm *.o'; }
-function PRO() { if [ ! -z $1 ]; then export PRO=$1; else export PRO=$(pwd); fi; }
+function makefile() { echo -e 'SRCS=main.cpp\nHDRS=\nOBJS=$(SRCS:.cpp=.o)\n\n.PHONY: clean main\nCXX=g++\nCXXFLAGS=-g -Wall -Wextra\n\n.cpp: $(SRCS) $(HDRS)\n\t$(CXX) $(CXXFLAGS) -c $<\n\nmain: $(OBJS)\n\t@clear\n\t@echo Sources: $(SRCS)\n\t@echo Headers: $(HDRS)\n\t@echo\n\t$(CXX) $(OBJS) -o main\n\nclean:\n\t$(RM) main $(OBJS)'; }
+function PRO() { if [ ! -z $1 ]; then export PRO=$PROPATH/$1; else export PRO=$(pwd); fi; }
 function lss() { ls "$1" | less; }
 function mkbk() { cp "$1" "$1.bak"; }
 function mkrs() { cp "$1.bak" "$1"; }
@@ -75,9 +76,10 @@ function backup() { tar -cvzf ~/Backups/backup_$(date +%d-%m-%Y).tar.gz -C ~ $(e
 
 #Variables
 LANG="en_US.UTF-8"
-PATH="$PATH:~/.bin"
-CDPATH="~:~/Projects"
-BKPATH="Desktop:Documents:Projects:Pictures:Videos:Music" #Must be absolute path if not in $HOME
+PATH="$PATH:~/Bin"
+CDPATH="~:~/Projects:~/Packages"
+BKPATH="Documents:Projects:Pictures:Videos:Music:Packages/dwm/config.h:Packages/dmenu/config.h" #Must be absolute path if not in $HOME
+PROPATH="~/Projects/C++"
 
 #Options
 shopt -s cdable_vars
@@ -90,3 +92,5 @@ shopt -s extglob
 shopt -s globstar
 shopt -s histappend
 shopt -s interactive_comments
+
+
