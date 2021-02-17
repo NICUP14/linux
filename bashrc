@@ -65,7 +65,7 @@ alias poweroff="sudo poweroff"
 alias reboot="sudo reboot" 
 function format() { sed -z 's/\n/\\n/g; s/\t/\\t/g;' $@; }
 function main() { echo -e '#include <iostream>\n\nint main()\n{\n\treturn 0;\n}'; }
-function makefile() { echo -e 'COMPILER=g++\nCOMPILERFLAGS=-g -Wall -Wextra\nLINKER=g++\nLINKERFLAGS=-g\n\nPROJECT=main\nSOURCES=main.cpp\nHEADERS=\nOBJECTS=$(SRCS:.cpp=.o)\n.PHONY: clean main\n\n.cpp: $(SOURCES) $(HEADERS)\n\t$(COMPILER) $(COMPILERFLAGS) -c $<\n\t\nmain: $(OBJECTS)\n\t@echo Project: $(PROJECT)\n\t@echo Sources: $(SOURCES)\n\t@echo Headers: $(HEADERS)\n\t@echo\n\t$(LINKER) $(LINKERFLAGS) -o $(PROJECT)\n\t\nclean:\n\t$(RM) $(PROJECT) $(OBJECTS)\n'; }
+function makefile() { echo -e 'COMPILER=g++\nCOMPILERFLAGS=-g -Wall -Wextra\nLINKER=g++\nLINKERFLAGS=-g\n\nPROJECT=main\nSOURCES=main.cpp\nHEADERS=\nOBJECTS=$(SOURCES:.cpp=.o)\n.PHONY: clean main\n\n.cpp: $(SOURCES) $(HEADERS)\n\t$(COMPILER) $(COMPILERFLAGS) -c $<\n\nmain: $(OBJECTS)\n\t@echo Project: $(PROJECT)\n\t@echo Sources: $(SOURCES)\n\t@echo Headers: $(HEADERS)\n\t@echo\n\t$(LINKER) $(LINKERFLAGS) $(OBJECTS) -o $(PROJECT)\n\nclean:\n\t$(RM) $(PROJECT) $(OBJECTS)\n'; }
 function mkbk() { cp "$1" "$1.bak"; }
 function mkrs() { cp "$1.bak" "$1"; }
 function mktf() { file="$(mktemp)"; ln -sf "$file" "$1"; }
