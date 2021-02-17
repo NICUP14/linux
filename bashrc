@@ -1,6 +1,6 @@
 #Bash custom configuration file
 #Written at 25.01.2021
-#Last updated at 8.02.2021 (Added PROject manager, main Makefile general sample, better prompt)
+#Last updated at 17.02.2021 (Improved makefile and added format bash functions)
 
 #Ansii color codes
 STOP='\[\e[0m\]'
@@ -66,12 +66,10 @@ alias reboot="sudo reboot"
 function format() { sed -z 's/\n/\\n/g; s/\t/\\t/g;' $@; }
 function main() { echo -e '#include <iostream>\n\nint main()\n{\n\treturn 0;\n}'; }
 function makefile() { echo -e 'COMPILER=g++\nCOMPILERFLAGS=-g -Wall -Wextra\nLINKER=g++\nLINKERFLAGS=-g\n\nPROJECT=main\nSOURCES=main.cpp\nHEADERS=\nOBJECTS=$(SRCS:.cpp=.o)\n.PHONY: clean main\n\n.cpp: $(SOURCES) $(HEADERS)\n\t$(COMPILER) $(COMPILERFLAGS) -c $<\n\t\nmain: $(OBJECTS)\n\t@echo Project: $(PROJECT)\n\t@echo Sources: $(SOURCES)\n\t@echo Headers: $(HEADERS)\n\t@echo\n\t$(LINKER) $(LINKERFLAGS) -o $(PROJECT)\n\t\nclean:\n\t$(RM) $(PROJECT) $(OBJECTS)\n'; }
-function lss() { ls "$1" | less; }
 function mkbk() { cp "$1" "$1.bak"; }
 function mkrs() { cp "$1.bak" "$1"; }
 function mktf() { file="$(mktemp)"; ln -sf "$file" "$1"; }
 function mktd() { file="$(mktemp -d)"; ln -sf "$file" "$1"; }
-function mkjail() { if [ ! -z $1 ]; then chrootmgr $1 create; chrootmgr $1 install $(which sh) $(which useradd); sudo busybox --install $1/bin; chrootmgr $1 secure; fi; }
 function backup() { tar -cvzf ~/Backups/backup_$(date +%d-%m-%Y).tar.gz -C ~ $(echo $BKPATH | tr ':' ' '); }
 
 #Variables
