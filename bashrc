@@ -63,9 +63,9 @@ alias hh="history | head"
 alias ht="history | tail"
 alias poweroff="sudo poweroff"
 alias reboot="sudo reboot" 
+function format() { sed -z 's/\n/\\n/g; s/\t/\\t/g;' $@; }
 function main() { echo -e '#include <iostream>\n\nint main()\n{\n\treturn 0;\n}'; }
-function makefile() { echo -e 'SRCS=main.cpp\nHDRS=\nOBJS=$(SRCS:.cpp=.o)\n\n.PHONY: clean main\nCXX=g++\nCXXFLAGS=-g -Wall -Wextra\n\n.cpp: $(SRCS) $(HDRS)\n\t$(CXX) $(CXXFLAGS) -c $<\n\nmain: $(OBJS)\n\t@clear\n\t@echo Sources: $(SRCS)\n\t@echo Headers: $(HDRS)\n\t@echo\n\t$(CXX) $(OBJS) -o main\n\nclean:\n\t$(RM) main $(OBJS)'; }
-function PRO() { if [ ! -z $1 ]; then export PRO=$PROPATH/$1; else export PRO=$(pwd); fi; }
+function makefile() { echo -e 'COMPILER=g++\nCOMPILERFLAGS=-g -Wall -Wextra\nLINKER=g++\nLINKERFLAGS=-g\n\nPROJECT=main\nSOURCES=main.cpp\nHEADERS=\nOBJECTS=$(SRCS:.cpp=.o)\n.PHONY: clean main\n\n.cpp: $(SOURCES) $(HEADERS)\n\t$(COMPILER) $(COMPILERFLAGS) -c $<\n\t\nmain: $(OBJECTS)\n\t@echo Project: $(PROJECT)\n\t@echo Sources: $(SOURCES)\n\t@echo Headers: $(HEADERS)\n\t@echo\n\t$(LINKER) $(LINKERFLAGS) -o $(PROJECT)\n\t\nclean:\n\t$(RM) $(PROJECT) $(OBJECTS)\n'; }
 function lss() { ls "$1" | less; }
 function mkbk() { cp "$1" "$1.bak"; }
 function mkrs() { cp "$1.bak" "$1"; }
@@ -79,7 +79,6 @@ LANG="en_US.UTF-8"
 PATH="$PATH:~/Bin"
 CDPATH="~:~/Projects:~/Packages"
 BKPATH="Documents:Projects:Pictures:Videos:Music:Packages/dwm/config.h:Packages/dmenu/config.h" #Must be absolute path if not in $HOME
-PROPATH="~/Projects/C++"
 
 #Options
 shopt -s cdable_vars
@@ -92,5 +91,3 @@ shopt -s extglob
 shopt -s globstar
 shopt -s histappend
 shopt -s interactive_comments
-
-
