@@ -62,10 +62,10 @@ alias hg="history | grep"
 alias hh="history | head"
 alias ht="history | tail"
 alias poweroff="sudo poweroff"
-alias reboot="sudo reboot" 
-function format() { sed -z 's/\n/\\n/g; s/\t/\\t/g;' $@; }
+alias reboot="sudo reboot"
+function format() { sed -z 's/\n/\\n/g; s/\t/\\t/g;' $1; }
 function main() { echo -e '#include <iostream>\n\nint main()\n{\n\treturn 0;\n}'; }
-function makefile() { echo -e 'COMPILER=g++\nCOMPILERFLAGS=-g -Wall -Wextra\nLINKER=g++\nLINKERFLAGS=-g\n\nPROJECT=main\nSOURCES=main.cpp\nHEADERS=\nOBJECTS=$(SOURCES:.cpp=.o)\n.PHONY: clean main\n\n.cpp: $(SOURCES) $(HEADERS)\n\t$(COMPILER) $(COMPILERFLAGS) -c $<\n\nmain: $(OBJECTS)\n\t@echo Project: $(PROJECT)\n\t@echo Sources: $(SOURCES)\n\t@echo Headers: $(HEADERS)\n\t@echo\n\t$(LINKER) $(LINKERFLAGS) $(OBJECTS) -o $(PROJECT)\n\nclean:\n\t$(RM) $(PROJECT) $(OBJECTS)\n'; }
+function makefile() { echo -e '#General makefile for C/C++ projects\n\n#C Compiler flags\nCFLAGS=-g -Wall -Wextra\n#C++ Compiler flags\nCXXFLAGS=$(CFLAGS)\n#Project name\nPROJECT=main\n#Project objects\nOBJECTS=main.o\n\n#Compiling rules\n\n#Linking rules\nall: $(OBJECTS)\n\t$(CXX) $(OBJECTS) -o $(PROJECT)\n\nclean:\n\t$(RM) $(OBJECTS) $(PROJECT)\n\ninfo:\n\t@echo Compiler flags: $(CXXFLAGS)\n\t@echo Project: $(PROJECT)\n\t@echo Objects: $(OBJECTS)'; } 
 function mkbk() { cp "$1" "$1.bak"; }
 function mkrs() { cp "$1.bak" "$1"; }
 function mktf() { file="$(mktemp)"; ln -sf "$file" "$1"; }
