@@ -49,28 +49,29 @@ alias vb="vim ~/.bashrc"
 alias sb="source ~/.bashrc"
 alias bt="bashtop"
 alias ls="ls -1 --color=auto"
+alias la="ls -a"
+alias ll="ls -al"
+alias lr="ls -aR"
 alias grep="grep --color=auto"
 alias mkdir="mkdir -pv"
 alias mv="mv -v"
 alias cp="cp -rv"
 alias rm="rm -rv"
-alias la="ls -a"
-alias ll="ls -al"
-alias lr="ls -aR"
-alias lg="la | grep"
 alias hg="history | grep"
 alias hh="history | head"
 alias ht="history | tail"
 alias poweroff="sudo poweroff"
 alias reboot="sudo reboot"
-function format() { sed -z 's/\n/\\n/g; s/\t/\\t/g;' $1; }
-function main() { echo -e '#include <iostream>\n\nint main()\n{\n\treturn 0;\n}'; }
-function makefile() { echo -e '#General makefile for C/C++ projects\n\n#C Compiler flags\nCFLAGS=-g -Wall -Wextra\n#C++ Compiler flags\nCXXFLAGS=$(CFLAGS)\n#Project name\nPROJECT=main\n#Project objects\nOBJECTS=main.o\n\n#Compiling rules\n\n#Linking rules\nall: $(OBJECTS)\n\t$(CXX) $(OBJECTS) -o $(PROJECT)\n\nclean:\n\t$(RM) $(OBJECTS) $(PROJECT)\n\ninfo:\n\t@echo Compiler flags: $(CXXFLAGS)\n\t@echo Project: $(PROJECT)\n\t@echo Objects: $(OBJECTS)'; } 
-function mkbk() { cp "$1" "$1.bak"; }
-function mkrs() { cp "$1.bak" "$1"; }
-function mktf() { file="$(mktemp)"; ln -sf "$file" "$1"; }
-function mktd() { file="$(mktemp -d)"; ln -sf "$file" "$1"; }
+function format() { sed -z 's/\n/\\n/g; s/\t/\\t/g;'; }
+function unformat() { tr -d '\n\t'; }
+function main() { echo -ne '#include <iostream>\n\nint main()\n{\n\treturn 0;\n}'; }
+function makefile() { echo -ne '#General makefile for C/C++ projects\n\n#C Compiler flags\nCFLAGS=-g -Wall -Wextra\n#C++ Compiler flags\nCXXFLAGS=$(CFLAGS)\n#Project name\nPROJECT=main\n#Project objects\nOBJECTS=main.o\n\n#Compiling rules\n\n#Linking rules\ndefault: clean $(PROJECT)\n\n$(PROJECT): $(OBJECTS)\n\t$(CXX) $(OBJECTS) -o $(PROJECT)\n\nclean:\n\t$(RM) $(OBJECTS) $(PROJECT)\n\ninfo:\n\t@echo Compiler flags: $(CXXFLAGS)\n\t@echo Project: $(PROJECT)\n\t@echo Objects: $(OBJECTS)'; }
+function mkb() { cp "$1" "$1.bak"; }
+function mkr() { cp "$1.bak" "$1"; }
+function mkf() { file="$(mktemp)"; ln -sf "$file" "$1"; }
+function mkd() { file="$(mktemp -d)"; ln -sf "$file" "$1"; }
 function backup() { tar -cvzf ~/Backups/backup_$(date +%d-%m-%Y).tar.gz -C ~ $(echo $BKPATH | tr ':' ' '); }
+function password() { echo "$1@$2" | sha256sum | cut -d ' ' -f 1; } #name@domain
 
 #Variables
 LANG="en_US.UTF-8"
